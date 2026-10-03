@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BI e Machine Learning Para Pequenas Pousadas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@200;300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #0d0d0d;
+      --ink-mid:   #3a3a3a;
+      --ink-light: #6c757d;
+      --surface:   #f8f8f8;
+      --paper:     #f0eeeb;
+      --red:       #c23616;
+      --red-light: #e74c3c;
+      --blue:      #4a69bd;
+      --blue-light:#6a89cc;
+      --amber:     #e1b12c;
+      --rule:      #d5d5d5;
+      --code-bg:   #111111;
+      --code-text: #e0e0e0;
+      /* cores usadas apenas nos painéis ilustrativos */
+      --navy:      #23244f;
+      --gold:      #f5b400;
+      --gold-soft: rgba(245,180,0,0.18);
+      --navy-soft: rgba(35,36,79,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: #fff;
+      color: var(--ink);
+      font-family: 'Manrope', system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.78;
+      font-weight: 400;
+    }
+
+    /* ══════════ HEADER ══════════ */
+    header {
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+      border-bottom: 4px solid var(--ink);
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 8px;
+      background: var(--red);
+    }
+
+    .header-watermark {
+      position: absolute;
+      top: 20px; right: -40px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      line-height: 2;
+      color: rgba(0,0,0,0.03);
+      transform: rotate(12deg);
+      width: 500px;
+      pointer-events: none;
+      white-space: pre-line;
+    }
+
+    .header-inner {
+      position: relative;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 64px 48px 56px 56px;
+    }
+
+    .header-meta {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-meta::before {
+      content: '';
+      width: 32px;
+      height: 2px;
+      background: var(--red);
+    }
+
+    .header-seal {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 2px solid var(--ink);
+      padding: 8px 20px;
+      margin-bottom: 28px;
+    }
+
+    .header-seal-icon { font-size: 1.4rem; }
+
+    .header-seal-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(2.4rem, 5.5vw, 3.8rem);
+      font-weight: 400;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    h1 em { font-style: italic; color: var(--red); }
+
+    .header-sub {
+      font-size: 1.05rem;
+      color: var(--ink-light);
+      line-height: 1.65;
+      font-weight: 300;
+      max-width: 620px;
+      margin-bottom: 32px;
+    }
+
+    .header-bar {
+      display: flex;
+      gap: 0;
+      border-top: 2px solid var(--ink);
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .header-bar-item {
+      flex: 1;
+      padding: 14px 16px;
+      border-right: 1px solid var(--rule);
+      text-align: center;
+    }
+
+    .header-bar-item:last-child { border-right: none; }
+
+    .hb-val {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2rem;
+      color: var(--red);
+      display: block;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    .hb-lbl {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+    }
+
+    .header-author {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .author-dot {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Manrope', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .author-info { font-size: 13px; color: var(--ink-light); }
+
+    .author-info strong {
+      display: block;
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* ══════════ TOC ══════════ */
+    .toc-bar {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 20px 48px 20px 56px;
+      background: var(--paper);
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 20px;
+      align-items: center;
+    }
+
+    .toc-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-right: 8px;
+    }
+
+    .toc-bar a {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-light);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .toc-bar a:hover { color: var(--red); }
+    .toc-bar a::before { content: '→ '; color: var(--rule); }
+
+    /* ══════════ ARTICLE BODY ══════════ */
+    .article-body {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 56px 48px 80px 56px;
+    }
+
+    .lead {
+      font-size: 1.15em;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--ink-mid);
+      border-left: 4px solid var(--red);
+      padding-left: 24px;
+      margin-bottom: 56px;
+    }
+
+    .lead strong { color: var(--ink); font-weight: 600; }
+
+    h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--ink);
+      margin: 72px 0 24px;
+      padding-top: 40px;
+      border-top: 3px solid var(--ink);
+      position: relative;
+    }
+
+    h2 .section-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--red);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    h3 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--ink);
+      margin: 36px 0 14px;
+    }
+
+    p { margin-bottom: 18px; }
+    strong { font-weight: 600; }
+
+    blockquote {
+      border-left: 4px solid var(--red);
+      padding: 20px 24px;
+      margin: 32px 0;
+      background: var(--paper);
+    }
+
+    blockquote p {
+      margin: 0;
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.2em;
+      font-style: italic;
+      color: var(--ink-mid);
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82em;
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 2px 7px;
+      border-radius: 2px;
+    }
+
+    /* ── CODE BLOCK ── */
+    .code-block {
+      background: var(--code-bg);
+      color: var(--code-text);
+      margin: 28px 0;
+      overflow: hidden;
+      font-family: 'Space Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+      border-left: 4px solid var(--red);
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .code-tag {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--red-light);
+    }
+
+    .code-title {
+      margin-left: auto;
+      font-size: 10px;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .code-block pre { padding: 20px; overflow-x: auto; margin: 0; }
+    .code-block pre code { background: none; padding: 0; font-size: inherit; }
+
+    .tk-kw  { color: #c678dd; }
+    .tk-str { color: #98c379; }
+    .tk-fn  { color: #61afef; }
+    .tk-cmt { color: #5c6370; font-style: italic; }
+    .tk-cls { color: #e5c07b; }
+    .tk-var { color: #e0e0e0; }
+    .tk-num { color: #d19a66; }
+
+    /* ── CALLOUT ── */
+    .callout {
+      background: var(--ink);
+      color: #fff;
+      padding: 36px 40px;
+      margin: 48px 0;
+      position: relative;
+      border-left: 4px solid var(--red);
+    }
+
+    .callout-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--red-light);
+      margin-bottom: 12px;
+    }
+
+    .callout p { font-size: 1em; line-height: 1.75; color: rgba(255,255,255,0.85); margin: 0; }
+    .callout strong { color: var(--red-light); }
+
+    /* ── SIDE NOTE ── */
+    .side-note {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      padding: 20px 24px;
+      margin: 28px 0;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--ink-mid);
+      position: relative;
+    }
+
+    .side-note::before {
+      content: 'NOTA';
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--blue);
+      position: absolute;
+      top: -9px; left: 16px;
+      background: var(--paper);
+      padding: 0 8px;
+    }
+
+    .side-note strong { color: var(--ink); }
+
+    /* ── TABLE ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-size: 14px;
+    }
+
+    .data-table th {
+      background: var(--ink);
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 12px 16px;
+      text-align: left;
+    }
+
+    .data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: top;
+    }
+
+    .data-table tr:nth-child(even) td { background: var(--paper); }
+
+    .data-table td:first-child {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red);
+      white-space: nowrap;
+    }
+
+    /* ── DOSSIER GRID ── */
+    .dossier-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 2px solid var(--ink);
+      margin: 32px 0;
+    }
+
+    .dossier-card {
+      padding: 22px 20px;
+      border-right: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      transition: background 0.2s;
+    }
+
+    .dossier-card:hover { background: var(--paper); }
+    .dossier-card:nth-child(even) { border-right: none; }
+    .dossier-card:nth-last-child(-n+2) { border-bottom: none; }
+
+    .dc-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 6px;
+    }
+
+    .dc-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.05rem;
+      color: var(--ink);
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .dc-tags { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--ink-light); }
+
+    .dc-tag {
+      display: inline-block;
+      border: 1px solid var(--rule);
+      padding: 1px 6px;
+      margin: 2px 2px 2px 0;
+    }
+
+    .dossier-highlight {
+      background: var(--ink);
+      color: #fff;
+      padding: 32px;
+      margin: 32px 0;
+      border-left: 4px solid var(--red);
+      position: relative;
+    }
+
+    .dossier-highlight .dc-num { color: var(--red-light); }
+    .dossier-highlight .dc-title { color: #fff; font-size: 1.15rem; }
+
+    .dossier-highlight p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9em;
+      margin: 10px 0 0;
+    }
+
+    .dossier-highlight .stamp {
+      position: absolute;
+      top: 12px; right: 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 2px 8px;
+    }
+
+    /* ══════════ PAINÉIS ILUSTRATIVOS (mockups) ══════════ */
+    .mock-zone {
+      border: 2px solid var(--ink);
+      margin: 48px 0;
+      overflow: hidden;
+    }
+
+    .mock-zone-header {
+      background: var(--ink);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .mz-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--red-light);
+    }
+
+    .mz-seal {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      color: rgba(255,255,255,0.35);
+    }
+
+    .mock {
+      background: #faf8f3;
+      padding: 22px 22px 26px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--navy);
+    }
+
+    .mock p { margin: 0; }
+    .mock-title { font-weight: 700; font-size: 17px; color: var(--navy); }
+    .mock-sub { font-size: 12px; color: #7b7b8c; margin-bottom: 16px; }
+
+    .mock-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 14px;
+      border-bottom: 1px solid #e3dfd5;
+      margin-bottom: 16px;
+    }
+
+    .mock-tab {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #6d6d82;
+      padding: 8px 10px;
+      border-bottom: 2px solid transparent;
+    }
+
+    .mock-tab.on { color: var(--navy); border-bottom-color: var(--gold); background: rgba(245,180,0,0.1); }
+
+    .mock-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+
+    .mock-filter {
+      font-size: 11px;
+      border: 1px solid #ddd8cb;
+      background: #fff;
+      border-radius: 6px;
+      padding: 5px 12px;
+      color: var(--navy);
+    }
+
+    .kpis { display: grid; gap: 12px; margin-bottom: 14px; }
+    .kpis.k5 { grid-template-columns: repeat(5, 1fr); }
+    .kpis.k4 { grid-template-columns: repeat(4, 1fr); }
+    .kpis.k2 { grid-template-columns: repeat(2, 1fr); }
+
+    .kpi {
+      background: #fff;
+      border: 1px solid #e8e4d9;
+      border-radius: 8px;
+      padding: 14px 14px 12px;
+    }
+
+    .kpi-l { font-size: 10.5px; color: #6d6d82; margin-bottom: 8px; }
+    .kpi-v { font-size: 20px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
+    .kpi-d { font-size: 10px; margin-top: 4px; color: #6d6d82; }
+    .kpi-d b.up { color: #1a8f4c; }
+    .kpi-d b.dn { color: #d12f2f; }
+
+    .mock-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .mock-card {
+      background: #fff;
+      border: 1px solid #e8e4d9;
+      border-radius: 8px;
+      padding: 14px 14px 10px;
+    }
+
+    .mock-card h4 { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+    .mock-card .mc-sub { font-size: 10px; color: #8a8a9a; margin-bottom: 8px; }
+    .mock-card svg { width: 100%; height: auto; display: block; }
+
+    .legend { display: flex; gap: 14px; justify-content: center; font-size: 10.5px; margin-top: 6px; }
+    .legend i { display: inline-block; width: 10px; height: 10px; margin-right: 5px; border-radius: 2px; vertical-align: -1px; }
+
+    .bars { display: flex; align-items: flex-end; justify-content: space-around; height: 150px; padding: 0 20px; border-bottom: 1px solid #d9d5c8; gap: 36px; }
+    .bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; }
+    .bar { width: 100%; border-radius: 3px 3px 0 0; }
+    .bar-lbls { display: flex; justify-content: space-around; font-size: 10px; color: #7b7b8c; padding: 4px 20px 0; gap: 36px; }
+    .bar-lbls span { flex: 1; text-align: center; }
+
+    .donut-wrap { display: flex; align-items: center; justify-content: center; gap: 22px; padding: 6px 0; }
+    .donut-wrap svg { width: 130px; flex-shrink: 0; }
+
+    .mock-alert {
+      background: #fff;
+      border: 1px solid #e0dccf;
+      border-left: 3px solid var(--navy);
+      padding: 9px 14px;
+      margin-bottom: 8px;
+      border-radius: 3px;
+    }
+
+    .mock-alert.warn { border-left-color: var(--gold); }
+    .mock-alert b { display: block; font-size: 12px; color: var(--navy); }
+    .mock-alert span { font-size: 11px; color: #5d5d72; }
+
+    .mock-h { font-size: 12.5px; font-weight: 700; margin: 14px 0 8px; color: var(--navy); }
+
+    .mock-caption {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      color: var(--ink-light);
+      padding: 12px 24px;
+      border-top: 1px solid var(--rule);
+      background: var(--surface);
+    }
+
+    /* ── CONCLUSION ── */
+    .conclusion {
+      border-top: 3px solid var(--ink);
+      border-bottom: 3px solid var(--ink);
+      padding: 40px 0;
+      margin: 64px 0 40px;
+    }
+
+    .conclusion-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 20px;
+    }
+
+    .conclusion p { margin-bottom: 16px; color: var(--ink-mid); }
+    .conclusion p:last-child { margin-bottom: 0; }
+    .conclusion strong { color: var(--ink); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 36px 20px;
+      font-size: 13px;
+      font-family: 'Manrope', sans-serif;
+    }
+
+    footer strong { color: var(--red-light); }
+
+    /* ── FADE-IN ── */
+    .fi { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .fi.v { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 760px) {
+      .kpis.k5 { grid-template-columns: repeat(2, 1fr); }
+      .kpis.k4 { grid-template-columns: repeat(2, 1fr); }
+      .mock-charts { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .header-inner { padding: 40px 20px 36px 28px; }
+      .toc-bar { padding: 16px 20px 16px 28px; }
+      .article-body { padding: 36px 20px 60px 28px; }
+      .callout { padding: 28px 20px; }
+      .conclusion { padding: 28px 0; }
+      h1 { font-size: 2rem; }
+      .dossier-grid { grid-template-columns: 1fr; }
+      .dossier-card { border-right: none; }
+      .dossier-card:nth-last-child(-n+2) { border-bottom: 1px solid var(--rule); }
+      .dossier-card:last-child { border-bottom: none; }
+      .header-bar { flex-wrap: wrap; }
+      .header-bar-item { min-width: 50%; }
+      .mock { padding: 16px 12px 20px; }
+      .donut-wrap { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ HEADER ════════════════ -->
+<header>
+  <div class="header-watermark">Taxa de ocupação · Receita diária · Ticket médio · Day Use · Canal de reserva · Cancelamentos · Previsão de demanda · Intervalo de confiança · Backtest · Custos operacionais</div>
+
+  <div class="header-inner">
+    <div class="header-meta">
+      <span>Projeto Entregue · Out 2026 · Business Intelligence + ML</span>
+    </div>
+
+    <div class="header-seal">
+      <span class="header-seal-icon">📊</span>
+      <span class="header-seal-text">BI × Hospedagem</span>
+    </div>
+
+    <h1>BI e Machine Learning<br>Para <em>Pequenas Pousadas</em></h1>
+
+    <p class="header-sub">
+      Como transformar reservas, day use e cancelamentos em um painel de decisão —
+      e como uma previsão de demanda de 90 dias ajuda o dono a decidir
+      quando segurar a tarifa, quando promover e quando reforçar a equipe.
+    </p>
+
+    <div class="header-bar">
+      <div class="header-bar-item">
+        <span class="hb-val">8</span>
+        <span class="hb-lbl">Painéis de BI</span>
+      </div>
+      <div class="header-bar-item">
+        <span class="hb-val">90d</span>
+        <span class="hb-lbl">Horizonte de Previsão</span>
+      </div>
+      <div class="header-bar-item">
+        <span class="hb-val">5</span>
+        <span class="hb-lbl">KPIs na Visão Geral</span>
+      </div>
+      <div class="header-bar-item">
+        <span class="hb-val">Out/26</span>
+        <span class="hb-lbl">Entrega</span>
+      </div>
+    </div>
+
+    <div class="header-author">
+      <div class="author-dot">JS</div>
+      <div class="author-info">
+        <strong>Jonh Selmo de Souza do Nascimento</strong>
+        Cientista de Dados · AI Engineer
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════ TOC ════════════════ -->
+<div class="toc-bar">
+  <span class="toc-label">Índice</span>
+  <a href="#s1">O Projeto</a>
+  <a href="#s2">Por Que BI</a>
+  <a href="#s3">O Dado</a>
+  <a href="#s4">Os Painéis</a>
+  <a href="#s5">Previsões</a>
+  <a href="#s6">Stack</a>
+  <a href="#s7">Limites</a>
+  <a href="#s8">Encerramento</a>
+</div>
+
+<!-- ════════════════ BODY ════════════════ -->
+<div class="article-body">
+
+  <p class="lead fi">
+    Uma pousada pequena gera dados todos os dias: <strong>cada reserva, cada day use, cada cancelamento, cada hóspede que chega pela porta sem avisar</strong>.
+    O problema é que, quase sempre, esses dados ficam espalhados em caderno, planilha ou na memória de quem toca o negócio.
+    Este artigo conta como esses registros viraram um <strong>painel de Business Intelligence</strong> dentro do próprio sistema de reservas,
+    com uma <strong>camada de previsão de demanda</strong> por cima — e, principalmente, o que aprendi no caminho,
+    inclusive sobre os limites do modelo.
+  </p>
+
+  <div class="side-note fi">
+    <strong>Sobre os números deste artigo:</strong> o nome da pousada (<em>Pousada Recanto do Sabiá</em>) e todos os valores exibidos são
+    <strong>fictícios</strong>, criados apenas para ilustrar. Os painéis das figuras foram redesenhados do zero com esses dados de exemplo.
+    Nenhum dado real do negócio aparece aqui.
+  </div>
+
+
+  <!-- ─── SEÇÃO 1 ─── -->
+  <h2 id="s1" class="fi"><span class="section-tag">Visão Geral</span>O Projeto</h2>
+
+  <p class="fi">
+    A <strong>Pousada Recanto do Sabiá</strong> (nome fictício) já tinha um sistema próprio de reservas, com painel administrativo,
+    calendário, pré-reservas, day use e cadastro de clientes. Faltava a camada que responde às perguntas que o dono faz de verdade:
+    <em>"como foi o mês?", "de onde vêm as reservas?", "quanto cancelou?", "e o que vem por aí?"</em>
+  </p>
+
+  <p class="fi">
+    A solução foi dividida em duas partes que se complementam. A primeira é o <strong>BI descritivo</strong>: oito abas dentro do painel administrativo,
+    todas com os mesmos filtros de período, tipo de receita e acomodação. A segunda é a <strong>previsão</strong>: um modelo preditivo que olha o histórico
+    e estima a demanda dos próximos 90 dias, entregue em linguagem de dono de pousada, não de cientista de dados.
+  </p>
+
+
+  <!-- ─── SEÇÃO 2 ─── -->
+  <h2 id="s2" class="fi"><span class="section-tag">Contexto</span>Por Que BI Numa Pousada Pequena?</h2>
+
+  <p class="fi">
+    Porque as decisões de uma pousada pequena são poucas, mas caras de errar. Fazer promoção num fim de semana que ia lotar de qualquer jeito
+    é dinheiro deixado na mesa. Segurar a tarifa num período de baixa pode significar quarto vazio. Esquecer de reforçar equipe e estoque
+    antes de uma sequência de dias cheios vira atendimento ruim — e avaliação ruim.
+  </p>
+
+  <blockquote class="fi">
+    <p>
+      BI não decide pelo dono. Ele troca o "acho que" por "vi que" — e deixa a experiência de quem conhece o negócio
+      trabalhar com informação melhor.
+    </p>
+  </blockquote>
+
+  <p class="fi">
+    Em um negócio desse tamanho, o BI também não pode ser um sistema à parte, com login separado e relatório exportado para planilha.
+    Se não estiver a um clique do dia a dia, ninguém abre. Por isso ele vive <strong>dentro do próprio painel administrativo</strong>,
+    na mesma tela onde o dono já confirma reservas e consulta o calendário.
+  </p>
+
+
+  <!-- ─── SEÇÃO 3 ─── -->
+  <h2 id="s3" class="fi"><span class="section-tag">Fundamentos</span>O Dado Nasce na Operação</h2>
+
+  <p class="fi">
+    Todo gráfico do painel só existe porque o sistema de reservas já registrava, desde o início, o que importa:
+    o <strong>tipo</strong> do serviço (hospedagem ou day use), o <strong>canal</strong> (site ou walk-in), o <strong>status</strong>
+    (confirmada ou cancelada), a <strong>acomodação</strong> escolhida e o <strong>número de pessoas</strong>.
+    O trabalho de BI foi organizar essas dimensões e deixá-las cruzáveis.
+  </p>
+
+  <div class="callout fi">
+    <div class="callout-tag">Conceito-Chave</div>
+    <p>
+      <strong>BI responde "o que aconteceu". Previsão responde "o que tende a acontecer".</strong>
+      As duas coisas são úteis, mas nenhuma substitui a outra — e nenhuma substitui o olhar de quem está na recepção.
+      Um bom painel deixa claro, o tempo todo, qual das duas perguntas está sendo respondida.
+    </p>
+  </div>
+
+  <p class="fi">
+    Um detalhe prático que faz diferença: todas as abas compartilham os mesmos três filtros — <strong>período</strong>
+    (últimos 30 dias, por exemplo), <strong>tipo</strong> (hospedagem, day use ou os dois juntos) e <strong>acomodação</strong>.
+    Quem aprende a filtrar em uma aba já sabe usar todas as outras.
+  </p>
+
+
+  <!-- ─── SEÇÃO 4 ─── -->
+  <h2 id="s4" class="fi"><span class="section-tag">Painéis</span>As Oito Abas do BI</h2>
+
+  <p class="fi">
+    O painel foi organizado como uma sequência de perguntas, da mais geral para a mais específica.
+    A Visão Geral dá o pulso do período; as demais abas aprofundam um assunto cada.
+  </p>
+
+  <div class="dossier-grid fi">
+    <div class="dossier-card">
+      <div class="dc-num">Aba 01</div>
+      <div class="dc-title">Visão Geral</div>
+      <div class="dc-tags"><span class="dc-tag">5 KPIs</span> <span class="dc-tag">Receita diária</span> <span class="dc-tag">Ocupação diária</span></div>
+    </div>
+    <div class="dossier-card">
+      <div class="dc-num">Aba 02</div>
+      <div class="dc-title">Reservas</div>
+      <div class="dc-tags"><span class="dc-tag">Status</span> <span class="dc-tag">Canal</span> <span class="dc-tag">Acomodação</span> <span class="dc-tag">Pessoas</span></div>
+    </div>
+    <div class="dossier-card">
+      <div class="dc-num">Aba 03</div>
+      <div class="dc-title">Day Use</div>
+      <div class="dc-tags"><span class="dc-tag">Day Use</span></div>
+    </div>
+    <div class="dossier-card">
+      <div class="dc-num">Aba 04</div>
+      <div class="dc-title">Financeiro</div>
+      <div class="dc-tags"><span class="dc-tag">Receita</span></div>
+    </div>
+    <div class="dossier-card">
+      <div class="dc-num">Aba 05</div>
+      <div class="dc-title">Ocupação</div>
+      <div class="dc-tags"><span class="dc-tag">Quartos</span></div>
+    </div>
+    <div class="dossier-card">
+      <div class="dc-num">Aba 06</div>
+      <div class="dc-title">Clientes</div>
+      <div class="dc-tags"><span class="dc-tag">Comportamento</span></div>
+    </div>
+    <div class="dossier-card">
+      <div class="dc-num">Aba 07</div>
+      <div class="dc-title">Cancelamentos</div>
+      <div class="dc-tags"><span class="dc-tag">Perdas</span></div>
+    </div>
+    <div class="dossier-card">
+      <div class="dc-num">Aba 08</div>
+      <div class="dc-title">Previsões</div>
+      <div class="dc-tags"><span class="dc-tag">ML</span> <span class="dc-tag">90 dias</span></div>
+    </div>
+  </div>
+
+  <h3 class="fi">Visão Geral: o pulso do período</h3>
+
+  <p class="fi">
+    A primeira aba responde em cinco números: <strong>receita total</strong>, <strong>taxa de ocupação</strong>, <strong>total de reservas</strong>,
+    <strong>total de day uses</strong> e <strong>ticket médio</strong>. Cada um vem com a variação contra o período anterior,
+    em verde ou vermelho, para que o dono perceba a direção sem calcular nada.
+    Abaixo, dois gráficos: a receita por dia (hospedagem e day use em séries separadas) e a ocupação diária em percentual de quartos ocupados.
+  </p>
+
+  <div class="mock-zone fi">
+    <div class="mock-zone-header">
+      <span class="mz-text">Figura 1 · Painel Visão Geral</span>
+      <span class="mz-seal">Pousada Recanto do Sabiá · dados fictícios</span>
+    </div>
+    <div class="mock">
+      <p class="mock-title">Business Intelligence</p>
+      <p class="mock-sub">Ocupação, receita, reservas e comportamento de clientes da pousada</p>
+
+      <div class="mock-tabs">
+        <span class="mock-tab on">Visão Geral</span>
+        <span class="mock-tab">Reservas</span>
+        <span class="mock-tab">Day Use</span>
+        <span class="mock-tab">Financeiro</span>
+        <span class="mock-tab">Ocupação</span>
+        <span class="mock-tab">Clientes</span>
+        <span class="mock-tab">Cancelamentos</span>
+        <span class="mock-tab">Previsões</span>
+      </div>
+
+      <div class="mock-filters">
+        <span class="mock-filter">Últimos 30 dias ▾</span>
+        <span class="mock-filter">Hospedagem + Day Use ▾</span>
+        <span class="mock-filter">Todas as acomodações ▾</span>
+      </div>
+
+      <div class="kpis k5">
+        <div class="kpi"><div class="kpi-l">Receita Total</div><div class="kpi-v">R$ 1.820,00</div><div class="kpi-d"><b class="up">▲ +8,4%</b> vs. período anterior</div></div>
+        <div class="kpi"><div class="kpi-l">Taxa de Ocupação</div><div class="kpi-v">40%</div><div class="kpi-d"><b class="dn">▼ −1,2%</b> vs. período anterior</div></div>
+        <div class="kpi"><div class="kpi-l">Total de Reservas</div><div class="kpi-v">12</div><div class="kpi-d"><b class="up">▲ +14,3%</b> vs. período anterior</div></div>
+        <div class="kpi"><div class="kpi-l">Total de Day Uses</div><div class="kpi-v">9</div><div class="kpi-d"><b class="up">▲ +12,5%</b> vs. período anterior</div></div>
+        <div class="kpi"><div class="kpi-l">Ticket Médio</div><div class="kpi-v">R$ 86,67</div><div class="kpi-d">&nbsp;</div></div>
+      </div>
+
+      <div class="mock-charts">
+        <div class="mock-card">
+          <h4>Receita Diária</h4>
+          <p class="mc-sub">Hospedagem e Day Use por dia, no período selecionado</p>
+          <div id="ch-receita"></div>
+          <div class="legend"><span><i style="background:var(--gold)"></i>Day Use</span><span><i style="background:var(--navy)"></i>Hospedagem</span></div>
+        </div>
+        <div class="mock-card">
+          <h4>Ocupação Diária</h4>
+          <p class="mc-sub">Percentual de quartos ocupados por dia</p>
+          <div id="ch-ocupacao"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mock-caption">Redesenho ilustrativo. Valores e datas inventados para este artigo.</div>
+  </div>
+
+  <p class="fi">
+    Uma conta simples que explica o ticket médio: ele é a receita total dividida pela soma de reservas e day uses
+    (no exemplo, R$ 1.820,00 ÷ 21 atendimentos). Parece detalhe, mas é o tipo de coisa que precisa estar clara
+    para o dono confiar no número.
+  </p>
+
+  <h3 class="fi">Reservas: de onde vem e para onde vai</h3>
+
+  <p class="fi">
+    A aba de Reservas abre com a <strong>taxa de conversão</strong> e o <strong>tempo médio até a confirmação</strong>,
+    e segue com quatro recortes: reservas por <strong>status</strong>, por <strong>canal</strong>, por <strong>tipo de acomodação</strong>
+    e por <strong>número de pessoas</strong>. É aqui que o dono enxerga, por exemplo, o peso do site frente ao walk-in
+    — informação que muda onde vale investir esforço de divulgação.
+  </p>
+
+  <div class="mock-zone fi">
+    <div class="mock-zone-header">
+      <span class="mz-text">Figura 2 · Aba Reservas</span>
+      <span class="mz-seal">Pousada Recanto do Sabiá · dados fictícios</span>
+    </div>
+    <div class="mock">
+      <div class="mock-tabs">
+        <span class="mock-tab">Visão Geral</span>
+        <span class="mock-tab on">Reservas</span>
+        <span class="mock-tab">Day Use</span>
+        <span class="mock-tab">Financeiro</span>
+        <span class="mock-tab">Ocupação</span>
+        <span class="mock-tab">Clientes</span>
+        <span class="mock-tab">Cancelamentos</span>
+        <span class="mock-tab">Previsões</span>
+      </div>
+
+      <div class="kpis k2">
+        <div class="kpi"><div class="kpi-l">Taxa de Conversão</div><div class="kpi-v">83,3%</div></div>
+        <div class="kpi"><div class="kpi-l">Tempo Médio até Confirmação</div><div class="kpi-v">—</div></div>
+      </div>
+
+      <div class="mock-charts">
+        <div class="mock-card">
+          <h4>Reservas por Status</h4>
+          <p class="mc-sub">&nbsp;</p>
+          <div class="donut-wrap">
+            <svg viewBox="0 0 160 160" role="img" aria-label="Gráfico de rosca: 10 confirmadas e 2 canceladas">
+              <circle cx="80" cy="80" r="58" fill="none" stroke="#23244f" stroke-width="24" stroke-dasharray="303.7 60.7" transform="rotate(-90 80 80)"/>
+              <circle cx="80" cy="80" r="58" fill="none" stroke="#e00000" stroke-width="24" stroke-dasharray="60.7 303.7" stroke-dashoffset="-303.7" transform="rotate(-90 80 80)"/>
+            </svg>
+            <div>
+              <div class="legend" style="flex-direction:column;gap:6px;align-items:flex-start;">
+                <span><i style="background:#23244f"></i>confirmada (10)</span>
+                <span><i style="background:#e00000"></i>cancelada (2)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mock-card">
+          <h4>Reservas por Canal</h4>
+          <p class="mc-sub">&nbsp;</p>
+          <div class="bars">
+            <div class="bar-col"><div class="bar" style="height:100%;background:var(--navy)"></div></div>
+            <div class="bar-col"><div class="bar" style="height:33%;background:var(--gold)"></div></div>
+          </div>
+          <div class="bar-lbls"><span>Site (9)</span><span>Walk-in (3)</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="mock-caption">Redesenho ilustrativo. O traço (—) em "Tempo Médio até Confirmação" representa dado ainda sem registro suficiente.</div>
+  </div>
+
+  <p class="fi">
+    Repare no traço no lugar do tempo médio de confirmação. Ele não é um erro de tela: é o painel dizendo, com honestidade,
+    que aquele indicador ainda não tem dado para ser calculado. Voltarei a isso na seção sobre limites.
+  </p>
+
+
+  <!-- ─── SEÇÃO 5 ─── -->
+  <h2 id="s5" class="fi"><span class="section-tag">Machine Learning</span>Previsões: os Próximos 90 Dias</h2>
+
+  <p class="fi">
+    A última aba é a que mais chama atenção, e a que exige mais cuidado ao ser apresentada.
+    O modelo preditivo lê o histórico da pousada e estima, dia a dia, a <strong>ocupação</strong> dos próximos 90 dias.
+    Em cima dessa curva, o painel calcula quatro números de resumo: ocupação prevista, receita prevista (ambas para os próximos 30 dias),
+    quantidade de <strong>dias de demanda alta</strong> e de <strong>dias de demanda baixa</strong>.
+  </p>
+
+  <p class="fi">
+    O gráfico mostra duas coisas ao mesmo tempo: uma <strong>linha</strong> com a previsão central e uma <strong>faixa dourada</strong>
+    com o intervalo onde o valor provavelmente vai ficar. A faixa é a parte mais importante: ela transmite a incerteza.
+    Uma previsão sem faixa dá a falsa impressão de certeza.
+  </p>
+
+  <div class="mock-zone fi">
+    <div class="mock-zone-header">
+      <span class="mz-text">Figura 3 · Aba Previsões</span>
+      <span class="mz-seal">Pousada Recanto do Sabiá · dados fictícios</span>
+    </div>
+    <div class="mock">
+      <div class="mock-tabs">
+        <span class="mock-tab">Visão Geral</span>
+        <span class="mock-tab">Reservas</span>
+        <span class="mock-tab">Day Use</span>
+        <span class="mock-tab">Financeiro</span>
+        <span class="mock-tab">Ocupação</span>
+        <span class="mock-tab">Clientes</span>
+        <span class="mock-tab">Cancelamentos</span>
+        <span class="mock-tab on">Previsões</span>
+      </div>
+
+      <p class="mock-title" style="font-size:15px">Previsões</p>
+      <p class="mock-sub">Como deve ser a demanda dos próximos 90 dias, calculada pelo modelo preditivo.</p>
+
+      <div class="kpis k4">
+        <div class="kpi"><div class="kpi-l">Ocupação prevista (30 dias)</div><div class="kpi-v">58%</div></div>
+        <div class="kpi"><div class="kpi-l">Receita prevista (30 dias)</div><div class="kpi-v">R$ 1.650,00</div></div>
+        <div class="kpi"><div class="kpi-l">Dias de demanda alta</div><div class="kpi-v">21</div></div>
+        <div class="kpi"><div class="kpi-l">Dias de demanda baixa</div><div class="kpi-v">6</div></div>
+      </div>
+
+      <p class="mock-h">O que fazer agora</p>
+      <div class="mock-alert warn"><b>⚠ Demanda alta por 4 dias seguidos</b><span>De sexta a segunda. Evite promoções, mantenha a tarifa cheia e confirme equipe e estoque.</span></div>
+      <div class="mock-alert"><b>ⓘ Use as previsões como tendência, não como meta</b><span>O teste do modelo contra o passado mostrou erro alto. Compare sempre com a sua experiência e com as reservas já confirmadas antes de decidir.</span></div>
+      <div class="mock-alert"><b>ⓘ Cadastre os custos do mês</b><span>Sem custos reais a previsão de custo e de margem fica limitada. Use a seção Custos operacionais abaixo.</span></div>
+
+      <p class="mock-h">Ocupação prevista</p>
+      <div class="mock-card">
+        <h4>Ocupação por dia</h4>
+        <p class="mc-sub">Linha azul = previsão · faixa dourada = onde o valor deve ficar</p>
+        <div id="ch-previsao"></div>
+      </div>
+    </div>
+    <div class="mock-caption">Redesenho ilustrativo. A curva foi gerada artificialmente para este artigo e não representa nenhuma pousada real.</div>
+  </div>
+
+  <h3 class="fi">"O que fazer agora": previsão que vira ação</h3>
+
+  <p class="fi">
+    A parte do painel que mais me interessa não é o gráfico, é o bloco <strong>"O que fazer agora"</strong>.
+    Um dono de pousada não quer interpretar uma curva — quer saber se deve ou não fazer promoção.
+    Por isso o modelo é traduzido em recomendações curtas, em português direto, como no exemplo abaixo.
+  </p>
+
+  <div class="dossier-highlight fi">
+    <span class="stamp">Alerta</span>
+    <div class="dc-num">Exemplo de recomendação</div>
+    <div class="dc-title">Demanda alta por 4 dias seguidos</div>
+    <p>
+      Quando o modelo identifica uma sequência de dias de demanda alta, o painel sugere manter a tarifa cheia, evitar promoções
+      e confirmar equipe e estoque com antecedência. A decisão continua sendo do dono; o painel só avisa a tempo.
+    </p>
+  </div>
+
+  <div class="dossier-highlight fi" style="border-left-color: var(--blue);">
+    <span class="stamp" style="color: var(--blue); border-color: var(--blue);">Honestidade</span>
+    <div class="dc-num" style="color: var(--blue-light);">Segundo alerta fixo</div>
+    <div class="dc-title">Use as previsões como tendência, não como meta</div>
+    <p>
+      O modelo foi testado contra o passado (um backtest) e o erro ficou alto. Em vez de esconder isso, o painel diz com todas as letras.
+      Previsão boa para uma pousada pequena é a que o dono usa com senso crítico — comparando com a experiência dele
+      e com as reservas já confirmadas.
+    </p>
+  </div>
+
+
+  <!-- ─── SEÇÃO 6 ─── -->
+  <h2 id="s6" class="fi"><span class="section-tag">Stack</span>Por Baixo do Painel</h2>
+
+  <p class="fi">
+    O BI foi construído como parte do mesmo sistema de reservas, sem ferramenta externa de dashboard.
+    Isso mantém tudo em um só lugar, com o mesmo login e as mesmas permissões do painel administrativo.
+  </p>
+
+  <table class="data-table fi">
+    <thead>
+      <tr>
+        <th>Camada</th>
+        <th>Papel no projeto</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Next.js</td><td>Aplicação web: site de reservas e painel administrativo, onde as abas de BI vivem</td></tr>
+      <tr><td>Supabase</td><td>Banco de dados das reservas, day uses e clientes — a fonte de todos os números do painel</td></tr>
+      <tr><td>Vercel</td><td>Publicação da aplicação em produção</td></tr>
+      <tr><td>Modelo preditivo</td><td>Estimativa de ocupação e receita para os próximos 90 dias, com faixa de incerteza</td></tr>
+      <tr><td>Backtest</td><td>Teste do modelo contra o passado, cujo resultado alimenta os avisos de confiabilidade na tela</td></tr>
+    </tbody>
+  </table>
+
+  <p class="fi">
+    O fluxo da previsão, em linhas gerais, é este: o modelo é atualizado a partir do histórico, gera a curva de 90 dias com a faixa de incerteza,
+    guarda o resultado e o painel apenas lê e exibe — incluindo o carimbo de <strong>"última atualização"</strong>,
+    para que o dono saiba há quanto tempo aquela previsão foi calculada.
+  </p>
+
+  <div class="code-block fi">
+    <div class="code-header">
+      <span class="code-tag">Python</span>
+      <span class="code-title">fluxo_previsao.py · esquema simplificado</span>
+    </div>
+    <pre><code><span class="tk-cmt"># Esquema conceitual — não é o código de produção</span>
+
+<span class="tk-kw">def</span> <span class="tk-fn">atualizar_previsao</span>():
+    <span class="tk-str">"""
+    1. Ler o histórico de reservas e day uses
+    2. Avaliar o modelo contra o passado (backtest)
+    3. Gerar ocupação e receita para os próximos 90 dias
+    4. Calcular a faixa de incerteza de cada dia
+    5. Classificar dias em demanda alta / baixa
+    6. Gravar resultado + data da última atualização
+    """</span>
+    <span class="tk-var">historico</span> = <span class="tk-fn">ler_historico</span>()
+    <span class="tk-var">erro</span>      = <span class="tk-fn">backtest</span>(<span class="tk-var">historico</span>)
+    <span class="tk-var">previsao</span>  = <span class="tk-fn">prever</span>(<span class="tk-var">historico</span>, <span class="tk-var">dias</span>=<span class="tk-num">90</span>)
+    <span class="tk-fn">gravar</span>(<span class="tk-var">previsao</span>, <span class="tk-var">erro</span>)</code></pre>
+  </div>
+
+
+  <!-- ─── SEÇÃO 7 ─── -->
+  <h2 id="s7" class="fi"><span class="section-tag">Limites</span>O Que o Painel Mostrou Sobre o Próprio Dado</h2>
+
+  <p class="fi">
+    Um efeito colateral valioso de construir BI é que ele denuncia a qualidade do dado. Três sinais apareceram nas telas,
+    e cada um virou uma lição prática:
+  </p>
+
+  <table class="data-table fi">
+    <thead>
+      <tr>
+        <th>Sinal</th>
+        <th>Leitura</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Traço (—) em tempo de confirmação</td><td>O indicador existe, mas o dado para calculá-lo ainda não é registrado de forma consistente. Melhor mostrar o vazio do que inventar um número.</td></tr>
+      <tr><td>Erro alto no backtest</td><td>Com pouco histórico, o modelo acerta a tendência, mas erra o nível. Por isso a faixa de incerteza e o aviso "tendência, não meta".</td></tr>
+      <tr><td>Custos operacionais vazios</td><td>Sem custo real cadastrado, o painel ignora a previsão de custo e de margem. A previsão de receita funciona; a de lucro depende do dono preencher.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="side-note fi">
+    <strong>A lição mais útil do projeto:</strong> um modelo não corrige dado ausente. O caminho para uma previsão melhor
+    passa por registrar mais e registrar melhor — confirmação, custos, cancelamentos com motivo — e deixar o histórico crescer.
+    O painel já aponta, na própria tela, o que falta preencher.
+  </div>
+
+
+  <!-- ─── ENCERRAMENTO ─── -->
+  <div class="conclusion fi" id="s8">
+    <div class="conclusion-tag">Encerramento</div>
+    <p>
+      O resultado não é um painel bonito; é um <strong>hábito</strong>. Abrir o BI na segunda-feira, olhar a Visão Geral,
+      conferir de onde vieram as reservas, checar o que o modelo espera para as próximas semanas e decidir com mais calma.
+      Para uma pousada pequena, esse ganho de calma vale mais do que qualquer gráfico sofisticado.
+    </p>
+    <p>
+      Do lado técnico, ficaram três convicções. A primeira: <strong>BI de verdade mora dentro da operação</strong>,
+      não numa ferramenta separada. A segunda: <strong>previsão sem incerteza é propaganda</strong> — a faixa dourada e o aviso
+      de "tendência, não meta" são parte do produto, não rodapé. A terceira: <strong>o dado ausente também é resultado</strong>,
+      e mostrar o traço no lugar de um número inventado é o que mantém o painel confiável.
+    </p>
+    <p>
+      <strong>Dado bom não precisa de empresa grande.</strong>
+      Precisa de registro consistente, de perguntas claras e de alguém disposto a olhar para os números
+      sem fingir que eles são mais certos do que são.
+    </p>
+  </div>
+
+</div>
+
+<!-- ════════════════ FOOTER ════════════════ -->
+<footer>
+  <p><strong>Jonh Selmo de Souza do Nascimento</strong> · Cientista de Dados · AI Engineer</p>
+  <p style="margin-top: 6px; font-size: 11px; font-family: 'Space Mono', monospace; letter-spacing: 0.06em;">
+    BI e Machine Learning Para Pequenas Pousadas · Outubro 2026 · Nome e valores fictícios
+  </p>
+</footer>
+
+<script>
+  /* ── fade-in ── */
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('v'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fi').forEach(el => obs.observe(el));
+
+  /* ── gráficos ilustrativos (dados inventados) ── */
+  function smooth(pts, bottom, top, move) {
+    const cl = y => Math.max(top, Math.min(bottom, y));
+    let d = move === false ? '' : `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+      const c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = cl(p1[1] + (p2[1] - p0[1]) / 6);
+      const c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = cl(p2[1] - (p3[1] - p1[1]) / 6);
+      d += ` C${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+    }
+    return d;
+  }
+
+  function drawChart(id, o) {
+    const W = o.W || 520, H = o.H || 260, L = 58, R = 10, T = 10, B = 26;
+    const pw = W - L - R, ph = H - T - B;
+    const n = o.n;
+    const X = i => L + (pw * i) / (n - 1);
+    const Y = v => T + ph - (ph * v) / o.ymax;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+
+    o.yticks.forEach(v => {
+      svg += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="#ece8dd" stroke-dasharray="3 3"/>`;
+      svg += `<text x="${L - 6}" y="${Y(v) + 3}" text-anchor="end" font-size="9" fill="#8a8a9a">${o.fmt(v)}</text>`;
+    });
+    o.xlabels.forEach(([i, t]) => {
+      svg += `<text x="${X(i)}" y="${H - 8}" text-anchor="middle" font-size="9" fill="#8a8a9a">${t}</text>`;
+    });
+    svg += `<line x1="${L}" x2="${L}" y1="${T}" y2="${T + ph}" stroke="#cfcabb"/><line x1="${L}" x2="${W - R}" y1="${T + ph}" y2="${T + ph}" stroke="#cfcabb"/>`;
+
+    if (o.band) {
+      const up = o.band.hi.map((v, i) => [X(i), Y(v)]);
+      const lo = o.band.lo.map((v, i) => [X(i), Y(v)]).reverse();
+      svg += `<path d="${smooth(up, T + ph, T)} L${lo[0][0]},${lo[0][1]} ${smooth(lo, T + ph, T, false)} Z" fill="#f5b400" fill-opacity="0.28"/>`;
+    }
+
+    o.series.forEach(s => {
+      const pts = s.data.map((v, i) => [X(i), Y(v)]);
+      const line = smooth(pts, T + ph, T);
+      if (s.fill) {
+        svg += `<path d="${line} L${X(n - 1)},${T + ph} L${X(0)},${T + ph} Z" fill="${s.color}" fill-opacity="${s.fill}"/>`;
+      }
+      svg += `<path d="${line}" fill="none" stroke="${s.color}" stroke-width="${s.w || 1.4}"/>`;
+    });
+
+    svg += `</svg>`;
+    document.getElementById(id).innerHTML = svg;
+  }
+
+  const brl = v => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+  const labels30 = [[0, 'D-30'], [5, 'D-25'], [10, 'D-20'], [15, 'D-15'], [20, 'D-10'], [25, 'D-5'], [29, 'Hoje']];
+
+  /* receita diária (soma ≈ R$ 1.820,00) */
+  drawChart('ch-receita', {
+    n: 30, ymax: 400, yticks: [0, 100, 200, 300, 400], fmt: brl, xlabels: labels30,
+    series: [
+      { color: '#23244f', fill: 0.12, data: [60,0,120,0,0,90,150,60,0,0,200,120,0,0,80,0,150,60,0,90,150,0,0,110,40,0,0,90,0,0] },
+      { color: '#f5b400', fill: 0.2,  data: [0,30,0,0,20,0,0,40,0,0,0,30,0,0,0,25,0,0,0,0,35,0,0,0,30,0,0,0,40,0] }
+    ]
+  });
+
+  /* ocupação diária (média ≈ 40%) */
+  drawChart('ch-ocupacao', {
+    n: 30, ymax: 100, yticks: [0, 25, 50, 75, 100], fmt: v => v + '%', xlabels: labels30,
+    series: [
+      { color: '#f5b400', fill: 0.18, data: [60,80,100,50,20,0,15,35,40,30,10,10,25,45,55,60,50,30,10,0,20,35,45,70,100,75,45,30,15,40] }
+    ]
+  });
+
+  /* previsão 90 dias — curva sintética com ciclo semanal */
+  (function () {
+    const n = 90, mid = [], hi = [], lo = [];
+    for (let d = 0; d < n; d++) {
+      const weekly = Math.sin((2 * Math.PI * (d + 2)) / 7) * 0.28;
+      const slow   = Math.sin((2 * Math.PI * d) / 45) * 0.08;
+      const m = Math.max(0.08, Math.min(1, 0.6 + weekly + slow));
+      const w = 0.07 + d * 0.0016;
+      mid.push(m * 100);
+      hi.push(Math.min(100, (m + w) * 100));
+      lo.push(Math.max(0, (m - w) * 100));
+    }
+    drawChart('ch-previsao', {
+      n: n, W: 760, H: 280, ymax: 100, yticks: [0, 25, 50, 75, 100], fmt: v => v + '%',
+      xlabels: [[0, 'Hoje'], [15, '+15d'], [30, '+30d'], [45, '+45d'], [60, '+60d'], [75, '+75d'], [89, '+90d']],
+      band: { hi, lo },
+      series: [{ color: '#23244f', data: mid, w: 1.6 }]
+    });
+  })();
+</script>
+
+</body>
+</html>
